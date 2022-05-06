@@ -6,7 +6,7 @@ import imutils
 class Camera():
     
     # varible initilised under class
-    image_counter = 1
+    
     nof_people = 0
     
     
@@ -57,7 +57,7 @@ class Camera():
                 curr_datetime = datetime.datetime.now().strftime('date_%Y-%m-%d_time_ %H-%M-%S')
                 
                 # Setting file name format.
-                image_name = "Image_{}_{}.png".format(self.image_counter, curr_datetime)
+                image_name = "Image_{}.png".format(curr_datetime)
                 
                 # Saving the image in specified memory location.
                 image = cv.imwrite(os.path.join(self.image_path , image_name), frame)
@@ -67,7 +67,7 @@ class Camera():
                 
                 
                 '''
-                Image processing
+                Image processing                
                 
                 HOG (Histogram of Oriented Gradients) is an object detector used to detect objects in computer vision 
                 and image processing. The technique counts occurrence of gradient orientation in localized portions 
@@ -79,8 +79,8 @@ class Camera():
                 hog = cv.HOGDescriptor()
                 hog.setSVMDetector(cv.HOGDescriptor_getDefaultPeopleDetector())
                 
-                image_read = cv.imread(os.path.join(self.image_path , image_name))
-                # image_read = cv.imread("people.png") # for testing
+                # image_read = cv.imread(os.path.join(self.image_path , image_name))
+                image_read = cv.imread("people.png") # for testing
                 
                 # Detecting all humans
                 (self.humans, _) = hog.detectMultiScale(image_read, winStride=(5, 5), padding=(3, 3), scale=1.21)
@@ -95,7 +95,7 @@ class Camera():
                     cv.rectangle(image_read, (x, y), (x + w, y + h), (0, 0, 255), 3)
                 
                 # Naming for processed image
-                processed_image_name = "Image_{}_{}.png".format(self.image_counter, curr_datetime)
+                processed_image_name = "Image_{}.png".format(curr_datetime)
                 
                 # Resizing the Image
                 image_resize = imutils.resize(image_read, width=min(720, image_read.shape[1]))
@@ -109,11 +109,9 @@ class Camera():
                 cv.destroyAllWindows()
                 
                 # Deleting images from directory
-                os.remove(os.path.join(self.image_path, image_name))
+                # os.remove(os.path.join(self.image_path, image_name))
                 # os.remove(os.path.join(self.processed_image_path, processed_image_name))
-                
-                self.image_counter += 1
-                    
+                                    
                 break
             
             else:
@@ -124,12 +122,12 @@ class Camera():
         
         if self.nof_people > 0:
         
-            frams_sec = 20.0
+            frams_sec = 15.0
             fourcc = cv.VideoWriter_fourcc(*'XVID')
             curr_datetime = datetime.datetime.now().strftime('date_%Y-%m-%d_time_ %H-%M-%S')
             video_name = ("Video_{}.avi".format(curr_datetime))
         
-            video_clip = cv.VideoWriter(os.path.join(self.video_path, video_name), fourcc, frams_sec, self.STD_DIMENSIONS["360p"])        
+            video_clip = cv.VideoWriter(os.path.join(self.video_path, video_name), fourcc, frams_sec, self.STD_DIMENSIONS["480p"])        
             capture_duration = 10
             startTime = time.time()
             timeElapsed = startTime - time.time()
@@ -151,7 +149,7 @@ class Camera():
                     
                 else:
                     break
-        
+                
         cv.destroyAllWindows()
            
 cam1 = Camera(0)
@@ -167,10 +165,13 @@ if __name__ == "__main__":
             if ord(run) == 114 or ord(run) == 82:
                 
                 # cv.waitKey(5000) # Witing for 5 secs to test the img process model.
-                cam1.get_dims("720p")
+                cam1.get_dims("480p")
                 cam1.imageProcess()
-                cam1.get_dims("360p")
+                cam1.get_dims("480p")
                 cam1.videoCapture()
+                
+            else:
+                print("Invalid Key..!")
         else:
-            print("invalid key..")
+            print("invalid key..!")
             continue
